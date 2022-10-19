@@ -89,6 +89,7 @@ public class MantemPedidoI implements MantemPedido {
 	 * @param pedidoDTO
 	 * @return pedido ou null
 	 */
+	@Transactional
 	@Override
 	public Pedido cadastrarPedido(PedidoDTO pedidoDTO) {
 		logger.info(">>>>>> 2. servico cadastrar pedido iniciado ");
