@@ -100,6 +100,7 @@ public class GrupoxApplication {
 		umProduto = produtoRepository.findById(2L);
 		produtoComprado1 = umProduto.get();
 		ip1 = new ItemDePedido(produtoComprado1, 20); // quantidade comprada
+		pedido2.setDataEmissao(dataAtual.toString(fmt));
 		pedido2.getItens().addAll(Arrays.asList(ip1));
 		pedidoServico.save(pedido2);
 		// *******************************************************************************************
@@ -109,6 +110,7 @@ public class GrupoxApplication {
 		umProduto = produtoRepository.findById(3L);
 		produtoComprado1 = umProduto.get();
 		ip1 = new ItemDePedido(produtoComprado1, 12); // quantidade comprada
+		pedido3.setDataEmissao(dataAtual.toString(fmt));
 		pedido3.getItens().addAll(Arrays.asList(ip1));
 		pedidoServico.save(pedido3);
 
