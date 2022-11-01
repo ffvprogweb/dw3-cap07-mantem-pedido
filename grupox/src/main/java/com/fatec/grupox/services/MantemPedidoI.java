@@ -113,6 +113,11 @@ public class MantemPedidoI implements MantemPedido {
 	}
 
 	@Transactional
+	/**
+	 * efetiva o cadastro do pedido na base cabecalho e item
+	 * @param pedido a ser cadastrado (sem id)
+	 * @return pedido com id
+	 */
 	public Pedido save(Pedido pedido) {
 		logger.info(">>>>>> servico save iniciado ");
 		logger.info(pedido.toString());
