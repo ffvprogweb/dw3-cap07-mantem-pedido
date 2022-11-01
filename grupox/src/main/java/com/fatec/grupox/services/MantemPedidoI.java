@@ -135,7 +135,6 @@ public class MantemPedidoI implements MantemPedido {
 
 	/**
 	 * verifica se o cpf do cliente esta cadastrado na base
-	 * 
 	 * @param cpf
 	 * @return true or false
 	 */
@@ -145,7 +144,6 @@ public class MantemPedidoI implements MantemPedido {
 
 	/**
 	 * verifica se o id de produto esta cadastrado na base
-	 * 
 	 * @param cod - codigo do produto
 	 * @return true or false
 	 */
