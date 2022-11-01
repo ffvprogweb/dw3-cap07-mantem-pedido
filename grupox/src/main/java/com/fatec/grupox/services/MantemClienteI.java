@@ -20,7 +20,7 @@ public class MantemClienteI implements MantemCliente {
 	Logger logger = LogManager.getLogger(this.getClass());
 	@Autowired
 	ClienteRepository repository;
-
+	@Override
 	public List<Cliente> consultaTodos() {
 		logger.info(">>>>>> servico consultaTodos chamado");
 		return repository.findAll();
