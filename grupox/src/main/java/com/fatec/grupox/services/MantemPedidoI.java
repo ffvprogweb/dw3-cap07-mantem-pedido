@@ -14,6 +14,7 @@ import org.joda.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.fatec.grupox.model.Cliente;
 import com.fatec.grupox.model.ItemDePedido;
 import com.fatec.grupox.model.ItemDePedidoRepository;
 import com.fatec.grupox.model.Pedido;
@@ -23,6 +24,11 @@ import com.fatec.grupox.model.Produto;
 import com.fatec.grupox.model.ProdutoRepository;
 
 @Service
+/**
+ * Implementa as regras de negocio para cadastrar, consultar e excluir pedido 
+ * @author programador1
+ *
+ */
 public class MantemPedidoI implements MantemPedido {
 	Logger logger = LogManager.getLogger(this.getClass());
 	@Autowired
@@ -43,7 +49,7 @@ public class MantemPedidoI implements MantemPedido {
 	@Transactional
 	@Override
 	public Pedido cadastrar(PedidoDTO pedidoDTO) {
-		logger.info(">>>>>> 2. servico cadastrar pedido iniciado ");
+		logger.info(">>>>>> servico cadastrar pedido iniciado ");
 		try {
 			Optional<Pedido> umPedido = obtemPedido(pedidoDTO);
 			if (umPedido.isPresent()) {
@@ -70,11 +76,11 @@ public class MantemPedidoI implements MantemPedido {
 	}
 
 	/**
-	 * efetiva as validações na entrada do usuario retorna pedido vazio se a entrada
-	 * for invalida.
+	 * converte pedidodto para pedido
+	 * verifica a entrada de usuario se o cliente existe e se o produto existe  
 	 * 
-	 * @param pedidoDTO
-	 * @return pedido
+	 * @param entra pedidoDTO
+	 * @return pedido vazio se a entrada for invalida
 	 */
 	public Optional<Pedido> obtemPedido(PedidoDTO pedidoDTO) {
 		// *************************************************************
@@ -82,16 +88,15 @@ public class MantemPedidoI implements MantemPedido {
 		// *************************************************************
 		Pedido pedido;
 		ItemDePedido item;
-		boolean cpfCadastrado = false;
 		Optional<Produto> produto;
-	
+		Optional<Cliente> cliente;
 		// *************************************************************
 		// Valida a entrada de dados (nao valida quantidade = 0)
 		// *************************************************************
-		cpfCadastrado = consultaCliente(pedidoDTO.getCpf());
-		produto = consulta(Long.parseLong(pedidoDTO.getProdutoId()));
+		cliente = consultaCliente(pedidoDTO.getCpf());
+		produto = consultaPedido(Long.parseLong(pedidoDTO.getProdutoId()));
 		
-		if (cpfCadastrado && produto.isPresent()) {
+		if (cliente.isPresent() && produto.isPresent()) {
 			pedido = new Pedido();
 			logger.info(">>>>>> servico obtem pedido - dados validos ");
 			DateTime dataAtual = new DateTime();
@@ -109,43 +114,42 @@ public class MantemPedidoI implements MantemPedido {
 
 	@Transactional
 	/**
-	 * efetiva o cadastro do pedido na base cabecalho e item
+	 * efetiva o cadastro do pedido no banco de dados primeiro cabecalho depois item
 	 * 
 	 * @param pedido a ser cadastrado (sem id)
 	 * @return pedido com id
 	 */
 	public Pedido save(Pedido pedido) {
 		logger.info(">>>>>> servico save iniciado ");
-		logger.info(pedido.toString());
 		Pedido umPedido = pedidoRepository.save(pedido);
-		logger.info(">>>>>> cabecalho do pedido salvo no repositorio ");
+		logger.info(">>>>>> servico save cabecalho do pedido salvo no repositorio ");
 		for (ItemDePedido item : pedido.getItens()) {
-			item.setProduto(produtoRepository.findById(item.getProduto().getProdutoId()).get());
+			//item.setProduto(produtoRepository.findById(item.getProduto().getProdutoId()).get());
+			item.setProduto(item.getProduto());
 			item.setQuantidade(item.getQuantidade());
 		}
-		logger.info(pedido.getItens().get(0).getProduto().toString());
 		itemRepository.saveAll(pedido.getItens());
-		logger.info(">>>>>> item do pedido salvo no repositorio ");
+		logger.info(">>>>>> servico save item do pedido salvo no repositorio ");
 		return umPedido;
 	}
 
 	/**
-	 * verifica se o cpf do cliente esta cadastrado na base
+	 * verifica se o cliente esta cadastrado no banco de dados
 	 * 
 	 * @param cpf
 	 * @return true or false
 	 */
-	public boolean consultaCliente(String cpf) {
-		return mantemCliente.consultaPorCpf(cpf).isPresent();
+	public Optional<Cliente> consultaCliente(String cpf) {
+		return mantemCliente.consultaPorCpf(cpf);
 	}
 
 	/**
-	 * verifica se o produto esta cadastrado na base
+	 * verifica se o produto esta cadastrado no banco de dados
 	 * 
-	 * @param cod - codigo do produto
+	 * @param id - codigo do produto
 	 * @return optional de produto
 	 */
-	public Optional<Produto> consulta(Long id) {
+	public Optional<Produto> consultaPedido(Long id) {
 		return produtoRepository.findById(id);
 	}
 }

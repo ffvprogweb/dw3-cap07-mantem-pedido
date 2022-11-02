@@ -28,7 +28,7 @@ public class GUIPedidoController {
 
 	@GetMapping("/pedidos")
 	public ModelAndView cadastrarPedido(PedidoDTO umPedido) {
-		logger.info(">>>>>> 1. controller pagina cadastrar pedido chamada  ");
+		logger.info(">>>>>> controller pagina cadastrar pedido chamada  ");
 		ModelAndView mv = new ModelAndView("cadastrarPedido");
 		mv.addObject("umPedido", umPedido);
 		return mv;
@@ -37,7 +37,7 @@ public class GUIPedidoController {
 	@GetMapping("/pedido")
 	public ModelAndView consultaPedidos() {
 		ModelAndView mv = new ModelAndView("consultarPedido");
-		logger.info(">>>>>> 1. controller chamou a api nativa de consulta de pedidos");
+		logger.info(">>>>>> controller chamou servico consulta todos pedidos");
 		mv.addObject("pedidos", mantemPedido.consultaTodos());
 		return mv;
 	}
@@ -52,7 +52,7 @@ public class GUIPedidoController {
 	@PostMapping("/pedidos")
 	public ModelAndView save(PedidoDTO pedidoDTO) {
 		ModelAndView mv = new ModelAndView("consultarPedido");
-		logger.info(">>>>>> 1. controller save iniciado  ");
+		logger.info(">>>>>> controller save iniciado  ");
 
 		if (mantemPedido.cadastrar(pedidoDTO) != null) {
 			logger.info(">>>>>> controller save dados validos  ");
@@ -68,7 +68,7 @@ public class GUIPedidoController {
 
 	@GetMapping("/pedidos/id/{id}")
 	public ModelAndView excluirPedido(@PathVariable("id") Long id) {
-		logger.info(">>>>>> 1. servico de exclusao chamado ");
+		logger.info(">>>>>> controller servico exclusao de pedido chamado ");
 		mantemPedido.exclui(id);
 		ModelAndView modelAndView = new ModelAndView("consultarPedido");
 		modelAndView.addObject("pedidos", mantemPedido.consultaTodos());

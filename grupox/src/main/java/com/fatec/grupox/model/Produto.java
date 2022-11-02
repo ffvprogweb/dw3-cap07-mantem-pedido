@@ -8,7 +8,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @Entity
 public class Produto {
 	@Id
-	private Long produtoId;
+	private Long produtoId; //deve ser associado ao codigo de barras
 	private String descricao;
 	private double custo;
 	private int quantidade;
