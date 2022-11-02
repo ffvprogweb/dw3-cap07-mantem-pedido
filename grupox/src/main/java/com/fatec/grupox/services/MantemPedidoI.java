@@ -42,7 +42,7 @@ public class MantemPedidoI implements MantemPedido {
 	 */
 	@Transactional
 	@Override
-	public Pedido cadastrarPedido(PedidoDTO pedidoDTO) {
+	public Pedido cadastrar(PedidoDTO pedidoDTO) {
 		logger.info(">>>>>> 2. servico cadastrar pedido iniciado ");
 		try {
 			Optional<Pedido> umPedido = obtemPedido(pedidoDTO);
@@ -54,9 +54,7 @@ public class MantemPedidoI implements MantemPedido {
 				return null;
 			}
 		} catch (Exception e) {
-			logger.info(">>>>>> servico cadastrar pedido - erro nao esperado contate o administrador ");
 			logger.info(">>>>>> servico cadastrar pedido - erro nao esperado => " + e.getMessage());
-			logger.info(">>>>>> servico cadastrar pedido - erro nao esperado => " + e.getStackTrace());
 			return null;
 		}
 	}
@@ -67,7 +65,7 @@ public class MantemPedidoI implements MantemPedido {
 	}
 
 	@Override
-	public void excluiPedido(Long id) {
+	public void exclui(Long id) {
 		pedidoRepository.deleteById(id);
 	}
 
@@ -82,28 +80,25 @@ public class MantemPedidoI implements MantemPedido {
 		// *************************************************************
 		// Estrutura de dados do metodo
 		// *************************************************************
-		Pedido pedido = new Pedido();
+		Pedido pedido;
 		ItemDePedido item;
-		Produto produto = new Produto();
 		boolean cpfCadastrado = false;
-		boolean produtoCadastrado = false;
+		Optional<Produto> produto;
+	
 		// *************************************************************
-		// Valida a entrada de dados
+		// Valida a entrada de dados (nao valida quantidade = 0)
 		// *************************************************************
 		cpfCadastrado = consultaCliente(pedidoDTO.getCpf());
-		produtoCadastrado = consultaProduto(Long.parseLong(pedidoDTO.getProdutoId()));
+		produto = consulta(Long.parseLong(pedidoDTO.getProdutoId()));
 		
-		if (cpfCadastrado && produtoCadastrado) {
+		if (cpfCadastrado && produto.isPresent()) {
+			pedido = new Pedido();
 			logger.info(">>>>>> servico obtem pedido - dados validos ");
 			DateTime dataAtual = new DateTime();
 			DateTimeFormatter fmt = DateTimeFormat.forPattern("dd/MM/YYYY");
 			pedido.setDataEmissao(dataAtual.toString(fmt));
 			pedido.setCpf(pedidoDTO.getCpf());
-
-			Optional<Produto> umProduto = produtoRepository.findById(Long.parseLong(pedidoDTO.getProdutoId()));
-			produto = umProduto.get();
-		
-			item = new ItemDePedido(produto, Integer.parseInt(pedidoDTO.getQuantidade()));
+			item = new ItemDePedido(produto.get(), Integer.parseInt(pedidoDTO.getQuantidade()));
 			pedido.getItens().addAll(Arrays.asList(item));
 			return Optional.of(pedido);
 		} else {
@@ -115,6 +110,7 @@ public class MantemPedidoI implements MantemPedido {
 	@Transactional
 	/**
 	 * efetiva o cadastro do pedido na base cabecalho e item
+	 * 
 	 * @param pedido a ser cadastrado (sem id)
 	 * @return pedido com id
 	 */
@@ -135,6 +131,7 @@ public class MantemPedidoI implements MantemPedido {
 
 	/**
 	 * verifica se o cpf do cliente esta cadastrado na base
+	 * 
 	 * @param cpf
 	 * @return true or false
 	 */
@@ -143,11 +140,12 @@ public class MantemPedidoI implements MantemPedido {
 	}
 
 	/**
-	 * verifica se o id de produto esta cadastrado na base
+	 * verifica se o produto esta cadastrado na base
+	 * 
 	 * @param cod - codigo do produto
-	 * @return true or false
+	 * @return optional de produto
 	 */
-	public boolean consultaProduto(Long cod) {
-		return produtoRepository.findById(cod).isPresent();
+	public Optional<Produto> consulta(Long id) {
+		return produtoRepository.findById(id);
 	}
 }

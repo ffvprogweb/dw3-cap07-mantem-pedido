@@ -104,7 +104,7 @@ class E1validaCadastroDePedido {
 		System.out.println("Item => " + pedido.getItens().get(0).getProduto().getProdutoId());
 		System.out.println("Item => " + pedido.getItens().get(0).getProduto().getDescricao());
 		pedidoServico.save(pedido);
-		pedidoServico.cadastrarPedido(pedidoDTO);
+		pedidoServico.cadastrar(pedidoDTO);
 	}
 	@Test
 	void ct02_dado_que_os_dados_sao_validos_obtem_pedido_retorna_um_pedido_valido() {

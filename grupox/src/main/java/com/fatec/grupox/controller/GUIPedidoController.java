@@ -54,7 +54,7 @@ public class GUIPedidoController {
 		ModelAndView mv = new ModelAndView("consultarPedido");
 		logger.info(">>>>>> 1. controller save iniciado  ");
 
-		if (mantemPedido.cadastrarPedido(pedidoDTO) != null) {
+		if (mantemPedido.cadastrar(pedidoDTO) != null) {
 			logger.info(">>>>>> controller save dados validos  ");
 			mv.addObject("pedidos", mantemPedido.consultaTodos());
 		} else {
@@ -69,7 +69,7 @@ public class GUIPedidoController {
 	@GetMapping("/pedidos/id/{id}")
 	public ModelAndView excluirPedido(@PathVariable("id") Long id) {
 		logger.info(">>>>>> 1. servico de exclusao chamado ");
-		mantemPedido.excluiPedido(id);
+		mantemPedido.exclui(id);
 		ModelAndView modelAndView = new ModelAndView("consultarPedido");
 		modelAndView.addObject("pedidos", mantemPedido.consultaTodos());
 		return modelAndView;
